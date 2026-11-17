@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATA_PROVIDER=${DATA_PROVIDER:-auto}
+      - FOOTBALL_DATA_API_KEY=${FOOTBALL_DATA_API_KEY:-}
+      - DATABASE_PATH=/app/data/epl_tactical.db
+    volumes:
+      - epl_data:/app/data
+
+  fastapi-api:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - epl_data:/app/data
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/epl_tactical.db
+      - DATA_PROVIDER=${DATA_PROVIDER:-auto}
+      - FOOTBALL_DATA_API_KEY=${FOOTBALL_DATA_API_KEY:-}
+    command: >
+      sh -c "pip install --no-cache-dir -r backend/requirements.txt &&
+             uvicorn backend.fastapi_app:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  epl_data:

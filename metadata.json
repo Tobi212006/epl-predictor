@@ -1,0 +1,8 @@
+{
+  "name": "EPL Tactical Intelligence",
+  "description": "Read the game. Model the outcome. 2026-27 English Premier League probabilistic match predictor and interactive 3D tactical analysis studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
