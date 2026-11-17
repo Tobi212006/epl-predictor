@@ -7,7 +7,7 @@ import {
   ClubKitBadge,
   SoccerBallEmblem,
   TacticalPitchBackdrop,
-  resolveMatchupUiAccents,
+  resolveMatchupKitPair,
 } from '../common/FootballMotifs';
 
 interface MatchdayShelf3DProps {
@@ -554,7 +554,7 @@ export const MatchdayShelf3D: React.FC<MatchdayShelf3DProps> = ({ fixtures }) =>
             const drawPct = fx.prob_draw !== null ? `${Math.round(fx.prob_draw * 100)}%` : '—';
             const awayPct = fx.prob_away !== null ? `${Math.round(fx.prob_away * 100)}%` : '—';
 
-            const spineAccents = resolveMatchupUiAccents(
+            const kitPair = resolveMatchupKitPair(
               { teamId: fx.home_team_id, primaryColor: fx.home_color, secondaryColor: fx.home_secondary || '#F4F7F5' },
               { teamId: fx.away_team_id, primaryColor: fx.away_color, secondaryColor: fx.away_secondary || '#F4F7F5' },
             );
@@ -584,35 +584,57 @@ export const MatchdayShelf3D: React.FC<MatchdayShelf3DProps> = ({ fixtures }) =>
                   }
                 }}
               >
-                {/* SPINE FACE (front of cuboid) */}
+                {/* SPINE FACE (top half Home team color, bottom half Away/Alt team color) */}
                 <div
-                  className="shelf-face-spine absolute flex flex-col items-center justify-between py-3 px-1 border border-white/20 overflow-hidden"
+                  className="shelf-face-spine absolute flex flex-col items-center justify-between py-2.5 px-0 border border-white/25 overflow-hidden"
                   style={{
                     width: dims.ws,
                     height: dims.H,
                     left: -dims.ws / 2,
                     top: -dims.H / 2,
                     transform: `translateZ(${dims.d / 2}px)`,
-                    background: `linear-gradient(180deg, ${spineAccents.homeAccent} 0%, #1B2732 42%, #0D131A 68%, ${spineAccents.awayAccent} 100%)`,
+                    background: `linear-gradient(180deg, ${kitPair.homeKit.primary} 0%, ${kitPair.homeKit.primary} 48%, ${kitPair.awayKit.primary} 52%, ${kitPair.awayKit.primary} 100%)`,
                   }}
                 >
-                  <span className="font-mono text-[9px] font-bold text-[#F4F7F5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight">
+                  {/* Top & Bottom Secondary Trim Bands */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-0 inset-x-0 h-1.5"
+                    style={{ backgroundColor: kitPair.homeKit.secondary }}
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-0 inset-x-0 h-1.5"
+                    style={{ backgroundColor: kitPair.awayKit.secondary }}
+                  />
+
+                  <span
+                    className="relative z-10 mt-1 font-mono text-[9px] font-extrabold tracking-tight"
+                    style={{ color: kitPair.homeKit.textColor }}
+                  >
                     MW{fx.matchweek}
                   </span>
 
-                  {/* Vertical Fixture TLA Spine Text */}
-                  <div
-                    className="font-display font-bold text-xs tracking-[0.18em] text-[#F4F7F5] uppercase whitespace-nowrap"
-                    style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
-                  >
-                    {fx.home_tla} × {fx.away_tla}
+                  {/* Vertical Fixture TLA Spine Plate for 100% WCAG legibility across any kit colors */}
+                  <div className="relative z-10 w-full py-2.5 bg-[#0D131A]/85 border-y border-white/25 flex items-center justify-center shadow-sm">
+                    <div
+                      className="font-display font-bold text-xs tracking-[0.16em] text-[#F4F7F5] uppercase whitespace-nowrap"
+                      style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                    >
+                      {fx.home_tla} × {fx.away_tla}
+                    </div>
                   </div>
 
-                  <span className="w-4 h-1 rounded-full bg-[#63E6A5]/90" />
+                  <span
+                    className="relative z-10 mb-1 font-mono text-[8px] font-extrabold tracking-wider uppercase"
+                    style={{ color: kitPair.awayKit.textColor }}
+                  >
+                    {kitPair.isAwayKit ? 'ALT' : 'H·A'}
+                  </span>
                   <div className="shelf-shade-overlay" />
                 </div>
 
-                {/* COVER FACE (right face of cuboid, turns forward at 90deg) */}
+                {/* COVER FACE (true diagonal Home vs Away team-colored matchday book cover) */}
                 <div
                   className="shelf-face-cover absolute flex flex-col justify-between p-3.5 border overflow-hidden"
                   style={{
@@ -621,56 +643,101 @@ export const MatchdayShelf3D: React.FC<MatchdayShelf3DProps> = ({ fixtures }) =>
                     left: -dims.d / 2,
                     top: -dims.H / 2,
                     transform: `rotateY(90deg) translateZ(${dims.ws / 2}px)`,
-                    borderColor: `${spineAccents.homeAccent}55`,
-                    background: `radial-gradient(circle at 22% 24%, ${spineAccents.homeAccent}26, transparent 58%), radial-gradient(circle at 78% 76%, ${spineAccents.awayAccent}24, transparent 58%), linear-gradient(160deg, #1B2732 0%, #141E28 55%, #0D131A 100%)`,
+                    borderColor: `${kitPair.homeAccent}80`,
+                    backgroundColor: '#141E28',
                   }}
                 >
-                  {/* Subtle Pitch Line Art Backdrop */}
-                  <TacticalPitchBackdrop className="absolute inset-0 w-full h-full opacity-35 pointer-events-none" />
+                  {/* Full-Bleed Home (Left) vs Away (Right) Diagonal Book Cover Artwork */}
+                  <svg
+                    viewBox="0 0 200 300"
+                    preserveAspectRatio="none"
+                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    aria-hidden="true"
+                  >
+                    {/* Home Half */}
+                    <polygon points="0,0 122,0 78,300 0,300" fill={kitPair.homeKit.primary} />
+                    <polygon points="0,0 14,0 14,300 0,300" fill={kitPair.homeKit.secondary} fillOpacity="0.88" />
+                    <polygon points="116,0 123,0 79,300 72,300" fill={kitPair.homeKit.secondary} fillOpacity="0.65" />
 
-                  <div className="relative z-10 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider">
-                    <span className={isLive ? 'text-[#F87171] font-bold' : 'text-[#63E6A5]'}>
-                      {isLive ? `LIVE ${fx.live_clock || ''}` : `MATCHWEEK ${fx.matchweek}`}
+                    {/* Away Half (uses authentic Away Kit automatically if primaries clash) */}
+                    <polygon points="122,0 200,0 200,300 78,300" fill={kitPair.awayKit.primary} />
+                    <polygon points="186,0 200,0 200,300 186,300" fill={kitPair.awayKit.secondary} fillOpacity="0.88" />
+                    <polygon points="122,0 129,0 85,300 78,300" fill={kitPair.awayKit.secondary} fillOpacity="0.65" />
+
+                    {/* Subtle Fabric Bookbinding Vignette */}
+                    <rect x="0" y="0" width="200" height="300" fill={`url(#cover-sheen-${v})`} opacity="0.22" />
+                    <defs>
+                      <linearGradient id={`cover-sheen-${v}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0D131A" stopOpacity="0.35" />
+                        <stop offset="48%" stopColor="#0D131A" stopOpacity="0.05" />
+                        <stop offset="100%" stopColor="#0D131A" stopOpacity="0.65" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+
+                  {/* Subtle Pitch Line Art Backdrop */}
+                  <TacticalPitchBackdrop className="absolute inset-0 w-full h-full opacity-25 pointer-events-none mix-blend-screen" />
+
+                  {/* High-Contrast Top Header Strip */}
+                  <div className="relative z-10 -mx-3.5 -mt-3.5 px-3 py-2 bg-[#0D131A]/85 backdrop-blur-sm border-b border-white/15 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider">
+                    <span className={isLive ? 'text-[#F87171] font-bold' : 'text-[#63E6A5] font-bold'}>
+                      {isLive ? `LIVE ${fx.live_clock || ''}` : `MW ${fx.matchweek}`}
                     </span>
-                    <span className="text-[#A5B2BD]">EPL 26–27</span>
+                    <span className="flex items-center gap-1.5 text-[#E2E8F0]">
+                      <span
+                        className="inline-block w-2.5 h-2.5 rounded-sm border border-white/40"
+                        style={{ backgroundColor: kitPair.homeKit.primary }}
+                        title={`${fx.home_short} Home Color`}
+                      />
+                      <span className="text-[9px] text-[#A5B2BD]">vs</span>
+                      <span
+                        className="inline-block w-2.5 h-2.5 rounded-sm border border-white/40"
+                        style={{ backgroundColor: kitPair.awayKit.primary }}
+                        title={`${fx.away_short} ${kitPair.isAwayKit ? 'Away Kit' : 'Club Color'}`}
+                      />
+                    </span>
                   </div>
 
-                  {/* Sculpted Club Kit Duel Art */}
-                  <div className="relative z-10 flex items-center justify-center gap-2 my-1">
-                    <ClubKitBadge
-                      teamId={fx.home_team_id}
-                      primaryColor={fx.home_color}
-                      secondaryColor={fx.home_secondary || '#F4F7F5'}
-                      tla={fx.home_tla}
-                      size="md"
-                    />
-                    <div className="flex flex-col items-center">
-                      <SoccerBallEmblem size={20} />
-                      <span className="mt-1 font-mono text-[10px] text-[#63E6A5] font-bold">
+                  {/* Sculpted Club Kit Duel Art framed for crisp separation against team-colored halves */}
+                  <div className="relative z-10 flex items-center justify-center gap-1.5 my-1">
+                    <div className="rounded-xl p-1 bg-[#0D131A]/42 backdrop-blur-[2px] border border-white/20 shadow-md">
+                      <ClubKitBadge
+                        teamId={fx.home_team_id}
+                        primaryColor={fx.home_color}
+                        secondaryColor={fx.home_secondary || '#F4F7F5'}
+                        tla={fx.home_tla}
+                        size="md"
+                      />
+                    </div>
+                    <div className="flex flex-col items-center px-1.5 py-1 rounded-lg bg-[#0D131A]/85 border border-white/20 shadow">
+                      <SoccerBallEmblem size={18} />
+                      <span className="mt-0.5 font-mono text-[10px] text-[#63E6A5] font-bold">
                         {fx.status === 'LIVE' || fx.status === 'FINISHED'
                           ? `${fx.home_goals ?? 0}–${fx.away_goals ?? 0}`
                           : 'VS'}
                       </span>
                     </div>
-                    <ClubKitBadge
-                      teamId={fx.away_team_id}
-                      primaryColor={fx.away_color}
-                      secondaryColor={fx.away_secondary || '#F4F7F5'}
-                      tla={fx.away_tla}
-                      size="md"
-                      isAway={spineAccents.isAwayKit}
-                    />
+                    <div className="rounded-xl p-1 bg-[#0D131A]/42 backdrop-blur-[2px] border border-white/20 shadow-md">
+                      <ClubKitBadge
+                        teamId={fx.away_team_id}
+                        primaryColor={fx.away_color}
+                        secondaryColor={fx.away_secondary || '#F4F7F5'}
+                        tla={fx.away_tla}
+                        size="md"
+                        isAway={kitPair.isAwayKit}
+                      />
+                    </div>
                   </div>
 
-                  {/* Footer Matchup Readout */}
-                  <div className="relative z-10">
-                    <div className="font-editorial text-base leading-tight text-[#F4F7F5] font-semibold truncate text-center">
+                  {/* High-Contrast Footer Matchup Readout */}
+                  <div className="relative z-10 bg-[#0D131A]/90 backdrop-blur-md rounded-lg p-2 border border-white/15 shadow-md">
+                    <div className="font-editorial text-sm sm:text-base leading-tight text-[#F4F7F5] font-semibold truncate text-center">
                       {fx.home_short} vs {fx.away_short}
                     </div>
-                    <div className="mt-1.5 flex items-center justify-between font-mono text-[10px] font-bold tabular-nums text-[#E2E8F0] bg-[#0D131A]/85 rounded px-2 py-1 border border-[#34424E]">
-                      <span style={{ color: spineAccents.homeAccent }}>H {homePct}</span>
+                    <div className="mt-1 flex items-center justify-between font-mono text-[10px] font-bold tabular-nums text-[#E2E8F0]">
+                      <span style={{ color: kitPair.homeAccent }}>H {homePct}</span>
                       <span className="text-[#A5B2BD] font-normal">D {drawPct}</span>
-                      <span style={{ color: spineAccents.awayAccent }}>A {awayPct}</span>
+                      <span style={{ color: kitPair.awayAccent }}>A {awayPct}</span>
                     </div>
                   </div>
                   <div className="shelf-shade-overlay" />
@@ -783,7 +850,7 @@ export const MatchdayShelf3D: React.FC<MatchdayShelf3DProps> = ({ fixtures }) =>
 
       {/* FULL-SCREEN TACTICAL DOSSIER SHEET (WAAPI clip-path expansion + SVG Ink-Blot Poster Reveal) */}
       {isOpen && openedFixture && (() => {
-        const dossierAccents = resolveMatchupUiAccents(
+        const dossierAccents = resolveMatchupKitPair(
           { teamId: openedFixture.home_team_id, primaryColor: openedFixture.home_color, secondaryColor: openedFixture.home_secondary || '#F4F7F5' },
           { teamId: openedFixture.away_team_id, primaryColor: openedFixture.away_color, secondaryColor: openedFixture.away_secondary || '#F4F7F5' },
         );
@@ -976,14 +1043,15 @@ export const MatchdayShelf3D: React.FC<MatchdayShelf3DProps> = ({ fixtures }) =>
                         ))}
                       </g>
                     </mask>
-                    <linearGradient id="poster-bg" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#1B2732" />
-                      <stop offset="52%" stopColor="#141E28" />
-                      <stop offset="100%" stopColor="#0D131A" />
+                    <linearGradient id="poster-bg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={dossierAccents.awayKit.primary} stopOpacity="0.34" />
+                      <stop offset="50%" stopColor="#141E28" stopOpacity="1" />
+                      <stop offset="100%" stopColor={dossierAccents.homeKit.primary} stopOpacity="0.36" />
                     </linearGradient>
                   </defs>
 
                   <g mask="url(#dossier-ink-mask)">
+                    <rect x="0" y="0" width="474" height="900" fill="#0D131A" />
                     <rect x="0" y="0" width="474" height="900" fill="url(#poster-bg)" />
 
                     {/* Pitch Vertical Chalk Lines */}

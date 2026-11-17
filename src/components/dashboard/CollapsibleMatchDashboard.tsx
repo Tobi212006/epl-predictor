@@ -15,6 +15,7 @@ import { LoadingSkeleton } from '../common/DataFreshnessStrip';
 import {
   CLUB_IDENTITY_META,
   ClubKitBadge,
+  ClubTlaBadge,
   PremChevronBackdrop,
   SoccerBallEmblem,
   getClubUiTheme,
@@ -242,12 +243,19 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                         />
 
                         {/* Top-Left Charcoal Glass Readout */}
-                        <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md bg-[#0D131A]/85 backdrop-blur-md border border-[#34424E] text-[11px] font-mono font-bold text-[#63E6A5] tabular-nums">
-                          {fx.home_xg !== null && fx.away_xg !== null
-                            ? `${fx.home_xg.toFixed(1)}–${fx.away_xg.toFixed(1)}`
-                            : `MW ${fx.matchweek}`}
-                          <span className="text-[#A5B2BD] font-normal">
-                            {fx.status === 'LIVE' ? ' LIVE' : ' xG'}
+                        <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md bg-[#0D131A]/90 backdrop-blur-md border border-[#34424E] text-[11px] font-mono font-bold text-[#63E6A5] tabular-nums flex items-center gap-1.5">
+                          <span>
+                            {fx.home_xg !== null && fx.away_xg !== null
+                              ? `${fx.home_xg.toFixed(1)}–${fx.away_xg.toFixed(1)} xG`
+                              : `MW ${fx.matchweek}`}
+                          </span>
+                          <span className="text-[#34424E]" aria-hidden="true">·</span>
+                          <span className={fx.status === 'LIVE' ? 'text-[#F87171]' : fx.status === 'FINISHED' ? 'text-[#C084FC]' : 'text-[#A5B2BD] font-normal'}>
+                            {fx.status === 'LIVE'
+                              ? `LIVE ${fx.live_clock || ''}`.trim()
+                              : fx.status === 'FINISHED'
+                              ? 'FT'
+                              : new Date(fx.kickoff_utc).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                           </span>
                         </div>
 
@@ -416,7 +424,12 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                 <div className="overflow-x-auto rounded-xl border border-[#34424E] bg-[#0D131A]">
                   <table className="w-full text-left border-collapse text-xs sm:text-sm tabular-nums">
                     <thead>
-                      <tr className="border-b border-[#34424E] text-[#A5B2BD] text-xs bg-[#1B2732]">
+                      <tr
+                        className="border-b border-[#34424E] text-[#A5B2BD] text-xs"
+                        style={{
+                          background: 'linear-gradient(90deg, rgba(56, 0, 60, 0.45) 0%, #1B2732 45%, #1B2732 100%)',
+                        }}
+                      >
                         <th className="py-3 px-3 font-medium">#</th>
                         <th className="py-3 px-3 font-medium">Club</th>
                         <th className="py-3 px-2.5 text-right font-medium">P</th>
@@ -449,6 +462,14 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                             : row.position >= 18
                             ? '#F87171'
                             : 'transparent';
+                        const zoneTag =
+                          row.position <= 4
+                            ? 'UCL'
+                            : row.position === 5
+                            ? 'UEL'
+                            : row.position >= 18
+                            ? 'REL'
+                            : '';
                         const zoneTitle =
                           row.position <= 4
                             ? 'UEFA Champions League Spot'
@@ -486,14 +507,9 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                             }`}
                           >
                             <td className="py-2.5 px-3 text-[#A5B2BD] font-mono">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1.5">
                                 <span
-                                  className="w-1 h-4 rounded-full shrink-0"
-                                  style={{ backgroundColor: zoneColor }}
-                                  title={zoneTitle}
-                                />
-                                <span
-                                  className="font-bold"
+                                  className="font-bold min-w-[1.25rem]"
                                   style={
                                     isFocused
                                       ? { color: rowTheme.accent }
@@ -504,16 +520,24 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                                 >
                                   {row.position}
                                 </span>
+                                {zoneTag && (
+                                  <span
+                                    className="hidden md:inline-block text-[9px] font-bold tracking-wider"
+                                    style={{ color: zoneColor }}
+                                  >
+                                    {zoneTag}
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="py-2.5 px-3 font-medium text-[#F4F7F5]">
                               <div className="flex items-center gap-2.5">
-                                <ClubKitBadge
+                                <ClubTlaBadge
                                   teamId={row.team_id}
+                                  tla={row.tla}
                                   primaryColor={row.primary_color}
                                   secondaryColor={row.secondary_color}
-                                  tla={row.tla}
-                                  size="xs"
+                                  size="sm"
                                 />
                                 <div className="min-w-0">
                                   <span className="whitespace-nowrap font-semibold" style={isFocused ? { color: rowTheme.accent } : undefined}>
@@ -554,7 +578,8 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                                 {row.form.map((res, idx) => (
                                   <span
                                     key={idx}
-                                    className={`w-5 h-5 rounded flex items-center justify-center ${
+                                    aria-label={res === 'W' ? 'Win' : res === 'D' ? 'Draw' : 'Loss'}
+                                    className={`w-5 h-5 rounded flex items-center justify-center font-bold ${
                                       res === 'W'
                                         ? 'bg-[#63E6A5]/20 text-[#63E6A5]'
                                         : res === 'D'
@@ -573,19 +598,12 @@ export const CollapsibleMatchDashboard: React.FC<CollapsibleMatchDashboardProps>
                     </tbody>
                   </table>
                   <div className="px-4 py-2.5 bg-[#141E28] border-t border-[#34424E] flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#A5B2BD]">
-                    <div className="flex flex-wrap items-center gap-4">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="w-1.5 h-3 rounded-full bg-[#7DD3FC]" />
-                        1–4 UEFA Champions League
-                      </span>
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="w-1.5 h-3 rounded-full bg-[#FBBF24]" />
-                        5th UEFA Europa League
-                      </span>
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="w-1.5 h-3 rounded-full bg-[#F87171]" />
-                        18–20 Relegation
-                      </span>
+                    <div className="flex flex-wrap items-center gap-4 font-mono">
+                      <span className="text-[#7DD3FC]">UCL: 1–4 Champions League</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-[#FBBF24]">UEL: 5th Europa League</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-[#F87171]">REL: 18–20 Relegation</span>
                     </div>
                     <span className="font-mono text-[#63E6A5]">Click any row to inspect 3D tactical shape</span>
                   </div>

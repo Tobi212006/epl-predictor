@@ -198,7 +198,13 @@ export const WhatIfLabPage: React.FC = () => {
       {/* Configuration Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 rounded-xl floodlit-card p-4 items-end">
         <div className="lg:col-span-3">
-          <label htmlFor="wi-home" className="block text-xs font-semibold text-[#7DD3FC] mb-1">Home Club</label>
+          <label
+            htmlFor="wi-home"
+            className="block text-xs font-semibold mb-1"
+            style={{ color: resolvedHomeColor }}
+          >
+            Home Club
+          </label>
           <select
             id="wi-home"
             value={homeId}
@@ -248,7 +254,13 @@ export const WhatIfLabPage: React.FC = () => {
         </div>
 
         <div className="lg:col-span-3">
-          <label htmlFor="wi-away" className="block text-xs font-semibold text-[#F87171] mb-1">Away Club</label>
+          <label
+            htmlFor="wi-away"
+            className="block text-xs font-semibold mb-1"
+            style={{ color: resolvedAwayColor }}
+          >
+            Away Club
+          </label>
           <select
             id="wi-away"
             value={awayId}
@@ -417,16 +429,16 @@ export const WhatIfLabPage: React.FC = () => {
               {
                 title: `${homeDetailQuery.data?.team.short_name || sim.effective_home_team.short_name} Squad Availability`,
                 players: homeDetailQuery.data?.players || [],
-                accent: 'text-[#7DD3FC]',
+                accentHex: resolvedHomeColor,
               },
               {
                 title: `${awayDetailQuery.data?.team.short_name || sim.effective_away_team.short_name} Squad Availability`,
                 players: awayDetailQuery.data?.players || [],
-                accent: 'text-[#F87171]',
+                accentHex: resolvedAwayColor,
               },
             ].map((panel) => (
               <div key={panel.title} className="rounded-xl floodlit-card p-4">
-                <h3 className={`font-display text-sm font-semibold ${panel.accent} mb-3`}>
+                <h3 className="font-display text-sm font-semibold mb-3" style={{ color: panel.accentHex }}>
                   {panel.title} (uncheck to simulate absence)
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">

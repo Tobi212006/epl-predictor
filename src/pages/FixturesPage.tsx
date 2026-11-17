@@ -7,6 +7,7 @@ import { DataFreshnessStrip, EmptyState, LoadingSkeleton } from '../components/c
 import {
   CLUB_IDENTITY_META,
   ClubKitBadge,
+  ClubTlaBadge,
   resolveMatchupUiAccents,
 } from '../components/common/FootballMotifs';
 
@@ -35,11 +36,14 @@ export const FixturesPage: React.FC = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#F4F7F5]">
-          2026–27 Premier League Fixtures &amp; Results
+        <div className="text-[11px] font-mono uppercase tracking-[0.14em] text-[#C084FC]">
+          Premier League Matchweek Hub
+        </div>
+        <h1 className="mt-0.5 font-display text-2xl sm:text-3xl font-bold text-[#F4F7F5]">
+          2026–27 Fixtures &amp; Results
         </h1>
         <p className="mt-1 text-sm text-[#A5B2BD]">
-          Browse all 38 matchweeks with Python-computed 1X2 probabilities, live clocks, and authentic club kits.
+          Browse all 38 matchweeks with Python-computed 1X2 probabilities, confidence levels, and authentic club kits.
         </p>
       </div>
 
@@ -57,7 +61,7 @@ export const FixturesPage: React.FC = () => {
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap shrink-0 min-h-[36px] transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap shrink-0 min-h-[38px] transition-colors ${
                 statusFilter === st ? 'bg-[#63E6A5] text-[#0D131A] font-bold' : 'text-[#A5B2BD] hover:text-[#F4F7F5]'
               }`}
             >
@@ -66,12 +70,12 @@ export const FixturesPage: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <select
             aria-label="Filter by matchweek"
             value={matchweekFilter}
             onChange={(e) => setMatchweekFilter(e.target.value)}
-            className="rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-1.5 text-xs text-[#F4F7F5] min-h-[36px]"
+            className="flex-1 sm:flex-initial rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-1.5 text-xs text-[#F4F7F5] min-h-[38px]"
           >
             <option value="">All Matchweeks (1–38)</option>
             {Array.from({ length: 38 }, (_, i) => i + 1).map((mw) => (
@@ -85,7 +89,7 @@ export const FixturesPage: React.FC = () => {
             aria-label="Filter by team"
             value={teamFilter}
             onChange={(e) => setTeamFilter(e.target.value)}
-            className="rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-1.5 text-xs text-[#F4F7F5] min-h-[36px]"
+            className="flex-1 sm:flex-initial rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-1.5 text-xs text-[#F4F7F5] min-h-[38px]"
           >
             <option value="">All 20 Clubs</option>
             {teams.map((t) => (
@@ -128,6 +132,11 @@ export const FixturesPage: React.FC = () => {
               { teamId: fx.away_team_id, primaryColor: fx.away_color, secondaryColor: fx.away_secondary },
             );
             const stadiumCap = CLUB_IDENTITY_META[fx.home_team_id]?.capacity;
+            const statusText = isLive
+              ? `LIVE ${fx.live_clock || ''}`.trim()
+              : isFin
+              ? 'FULL TIME'
+              : 'UPCOMING';
             return (
               <div
                 key={fx.id}
@@ -136,12 +145,14 @@ export const FixturesPage: React.FC = () => {
                   backgroundImage: `linear-gradient(105deg, ${accents.homeAccent}14 0%, transparent 45%, ${accents.awayAccent}14 100%)`,
                 }}
               >
-                <div className="flex items-center justify-between text-xs text-[#A5B2BD] tabular-nums">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#A5B2BD] tabular-nums">
                   <span className="flex items-center gap-2">
-                    <span className={isLive ? 'text-[#F87171] font-bold' : 'text-[#63E6A5] font-semibold'}>
-                      {isLive ? `LIVE ${fx.live_clock || ''}` : `MW ${fx.matchweek}`}
+                    <span className="font-mono font-semibold text-[#C084FC]">MW {fx.matchweek}</span>
+                    <span aria-hidden="true">·</span>
+                    <span className={`font-mono font-bold ${isLive ? 'text-[#F87171]' : isFin ? 'text-[#63E6A5]' : 'text-[#7DD3FC]'}`}>
+                      {statusText}
                     </span>
-                    <span>·</span>
+                    <span aria-hidden="true">·</span>
                     <span>
                       {new Date(fx.kickoff_utc).toLocaleDateString(undefined, {
                         month: 'short',
@@ -151,15 +162,15 @@ export const FixturesPage: React.FC = () => {
                       })}
                     </span>
                   </span>
-                  <span className="truncate max-w-[45%]">
+                  <span className="truncate max-w-full sm:max-w-[44%]">
                     {fx.venue}
                     {stadiumCap ? ` (${Math.round(stadiumCap / 1000)}k)` : ''}
                   </span>
                 </div>
 
-                {/* Home vs Away Real Jerseys Battle Row */}
-                <div className="flex items-center justify-between gap-3 py-1">
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                {/* Home (Left) vs Away (Right) Match Card */}
+                <div className="flex items-center justify-between gap-2 sm:gap-3 py-1">
+                  <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                     <ClubKitBadge
                       teamId={fx.home_team_id}
                       primaryColor={fx.home_color}
@@ -168,15 +179,27 @@ export const FixturesPage: React.FC = () => {
                       size="sm"
                     />
                     <div className="min-w-0">
-                      <div className="font-display text-base font-bold text-[#F4F7F5] truncate">{fx.home_short}</div>
-                      <div className="text-[10px] font-mono font-bold" style={{ color: accents.homeAccent }}>
+                      <div className="flex items-center gap-1.5">
+                        <ClubTlaBadge
+                          teamId={fx.home_team_id}
+                          tla={fx.home_tla}
+                          primaryColor={fx.home_color}
+                          secondaryColor={fx.home_secondary}
+                          size="sm"
+                          className="hidden sm:inline-flex"
+                        />
+                        <span className="font-display text-sm sm:text-base font-bold text-[#F4F7F5] truncate">
+                          {fx.home_short}
+                        </span>
+                      </div>
+                      <div className="text-[10px] font-mono font-bold mt-0.5" style={{ color: accents.homeAccent }}>
                         HOME
                       </div>
                     </div>
                   </div>
 
                   {isFin || isLive ? (
-                    <div className="font-mono text-lg font-extrabold text-[#F4F7F5] tabular-nums px-3 py-1 rounded-lg bg-[#141E28] border border-[#34424E] shrink-0">
+                    <div className="font-mono text-base sm:text-lg font-extrabold text-[#F4F7F5] tabular-nums px-2.5 sm:px-3 py-1 rounded-lg bg-[#141E28] border border-[#34424E] shrink-0">
                       {fx.home_goals ?? 0} – {fx.away_goals ?? 0}
                     </div>
                   ) : (
@@ -185,10 +208,22 @@ export const FixturesPage: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1 justify-end text-right">
+                  <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 justify-end text-right">
                     <div className="min-w-0">
-                      <div className="font-display text-base font-bold text-[#F4F7F5] truncate">{fx.away_short}</div>
-                      <div className="text-[10px] font-mono font-bold" style={{ color: accents.awayAccent }}>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <span className="font-display text-sm sm:text-base font-bold text-[#F4F7F5] truncate">
+                          {fx.away_short}
+                        </span>
+                        <ClubTlaBadge
+                          teamId={fx.away_team_id}
+                          tla={fx.away_tla}
+                          primaryColor={fx.away_color}
+                          secondaryColor={fx.away_secondary}
+                          size="sm"
+                          className="hidden sm:inline-flex"
+                        />
+                      </div>
+                      <div className="text-[10px] font-mono font-bold mt-0.5" style={{ color: accents.awayAccent }}>
                         {accents.isAwayKit ? 'AWAY ALT' : 'AWAY'}
                       </div>
                     </div>
@@ -205,18 +240,21 @@ export const FixturesPage: React.FC = () => {
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#34424E] text-xs tabular-nums">
                   {fx.prob_home !== null && fx.prob_draw !== null && fx.prob_away !== null ? (
-                    <div className="font-mono text-[#A5B2BD]">
+                    <div className="font-mono text-[#A5B2BD] flex flex-wrap items-center gap-1.5">
                       <span className="font-semibold" style={{ color: accents.homeAccent }}>
-                        H {Math.round(fx.prob_home * 100)}%
+                        {fx.home_tla} {Math.round(fx.prob_home * 100)}%
                       </span>
-                      {' · '}
-                      <span>D {Math.round(fx.prob_draw * 100)}%</span>
-                      {' · '}
+                      <span aria-hidden="true">·</span>
+                      <span>Draw {Math.round(fx.prob_draw * 100)}%</span>
+                      <span aria-hidden="true">·</span>
                       <span className="font-semibold" style={{ color: accents.awayAccent }}>
-                        A {Math.round(fx.prob_away * 100)}%
+                        {fx.away_tla} {Math.round(fx.prob_away * 100)}%
                       </span>
                       {fx.home_xg !== null && fx.away_xg !== null && (
-                        <span className="ml-2 text-[#A5B2BD]">({fx.home_xg.toFixed(2)}–{fx.away_xg.toFixed(2)} xG)</span>
+                        <span className="text-[#A5B2BD]">({fx.home_xg.toFixed(2)}–{fx.away_xg.toFixed(2)} xG)</span>
+                      )}
+                      {fx.confidence_label && (
+                        <span className="text-[#A5B2BD]">· {fx.confidence_label} conf</span>
                       )}
                     </div>
                   ) : (
@@ -227,14 +265,14 @@ export const FixturesPage: React.FC = () => {
                     <Link
                       to={`/match-center/${fx.id}`}
                       onClick={() => setSelectedFixtureId(fx.id)}
-                      className="text-[#7DD3FC] hover:text-[#63E6A5] font-semibold whitespace-nowrap"
+                      className="text-[#7DD3FC] hover:text-[#63E6A5] font-semibold whitespace-nowrap py-1"
                     >
                       Match Center →
                     </Link>
                     <Link
                       to={`/match-flow?fixture=${fx.id}`}
                       onClick={() => setSelectedFixtureId(fx.id)}
-                      className="text-[#A5B2BD] hover:text-[#F4F7F5] whitespace-nowrap"
+                      className="text-[#A5B2BD] hover:text-[#F4F7F5] whitespace-nowrap py-1"
                     >
                       Match Flow
                     </Link>

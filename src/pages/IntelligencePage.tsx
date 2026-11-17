@@ -224,9 +224,13 @@ export const IntelligencePage: React.FC = () => {
       />
 
       {/* Club Picker Toolbar */}
-      <div className="rounded-xl floodlit-card p-4 flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
-          <label htmlFor="intel-left-club" className="text-xs font-semibold text-[#7DD3FC]">
+      <div className="rounded-xl floodlit-card p-4 flex flex-wrap items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 flex-1 sm:flex-initial min-w-[160px]">
+          <label
+            htmlFor="intel-left-club"
+            className="text-xs font-semibold whitespace-nowrap"
+            style={{ color: matchupAccents?.homeAccent || '#7DD3FC' }}
+          >
             Club A
           </label>
           <select
@@ -236,7 +240,7 @@ export const IntelligencePage: React.FC = () => {
               setLeftTeamId(e.target.value);
               setPlayerLeftIdx(0);
             }}
-            className="rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-2 text-xs text-[#F4F7F5] min-h-[38px]"
+            className="flex-1 sm:flex-initial rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-2 text-xs text-[#F4F7F5] min-h-[38px]"
           >
             {teams.map((t) => (
               <option key={t.team_id} value={t.team_id} disabled={t.team_id === rightTeamId}>
@@ -255,8 +259,12 @@ export const IntelligencePage: React.FC = () => {
           Swap Clubs
         </button>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="intel-right-club" className="text-xs font-semibold text-[#F87171]">
+        <div className="flex items-center gap-2 flex-1 sm:flex-initial min-w-[160px]">
+          <label
+            htmlFor="intel-right-club"
+            className="text-xs font-semibold whitespace-nowrap"
+            style={{ color: matchupAccents?.awayAccent || '#F87171' }}
+          >
             Club B
           </label>
           <select
@@ -266,7 +274,7 @@ export const IntelligencePage: React.FC = () => {
               setRightTeamId(e.target.value);
               setPlayerRightIdx(0);
             }}
-            className="rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-2 text-xs text-[#F4F7F5] min-h-[38px]"
+            className="flex-1 sm:flex-initial rounded-lg bg-[#141E28] border border-[#34424E] px-3 py-2 text-xs text-[#F4F7F5] min-h-[38px]"
           >
             {teams.map((t) => (
               <option key={t.team_id} value={t.team_id} disabled={t.team_id === leftTeamId}>
@@ -357,6 +365,7 @@ export const IntelligencePage: React.FC = () => {
                     {side.splits.form.map((res, idx) => (
                       <span
                         key={idx}
+                        aria-label={res === 'W' ? 'Win' : res === 'D' ? 'Draw' : 'Loss'}
                         className={`w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold ${
                           res === 'W'
                             ? 'bg-[#63E6A5]/20 text-[#63E6A5]'
@@ -506,7 +515,11 @@ export const IntelligencePage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label htmlFor="pl-cmp-left" className="block text-[#7DD3FC] font-semibold mb-1">
+                  <label
+                    htmlFor="pl-cmp-left"
+                    className="block font-semibold mb-1"
+                    style={{ color: matchupAccents.homeAccent }}
+                  >
                     {cmp.left.team.short_name} Player
                   </label>
                   <select
@@ -524,7 +537,11 @@ export const IntelligencePage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="pl-cmp-right" className="block text-[#F87171] font-semibold mb-1">
+                  <label
+                    htmlFor="pl-cmp-right"
+                    className="block font-semibold mb-1"
+                    style={{ color: matchupAccents.awayAccent }}
+                  >
                     {cmp.right.team.short_name} Player
                   </label>
                   <select

@@ -384,19 +384,66 @@ export const MatchCenterPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Last 5 Matches Form Comparison */}
+          {/* Last 5 Matches Form Comparison & League Position Context */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {[
-              { label: `${homeTeam.team.short_name} Recent Form (Last 5)`, matches: homeTeam.recent_matches },
-              { label: `${awayTeam.team.short_name} Recent Form (Last 5)`, matches: awayTeam.recent_matches },
-            ].map((panel) => (
+              { teamObj: homeTeam.team, label: `${homeTeam.team.short_name} Recent Form (Last 5)`, matches: homeTeam.recent_matches, splitLabel: 'Home Side' },
+              { teamObj: awayTeam.team, label: `${awayTeam.team.short_name} Recent Form (Last 5)`, matches: awayTeam.recent_matches, splitLabel: 'Away Side' },
+            ].map((panel) => {
+              const standingRow = teams.find((t) => t.team_id === panel.teamObj.id);
+              return (
               <div key={panel.label} className="rounded-xl floodlit-card p-5">
-                <h3 className="font-display text-base font-semibold text-[#F4F7F5]">{panel.label}</h3>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h3 className="font-display text-base font-semibold text-[#F4F7F5]">{panel.label}</h3>
+                    {standingRow && (
+                      <div className="mt-0.5 text-xs text-[#A5B2BD] tabular-nums">
+                        #{standingRow.position} in Premier League · {standingRow.points} pts ({standingRow.won}W-{standingRow.drawn}D-{standingRow.lost}L) · {panel.splitLabel}
+                      </div>
+                    )}
+                  </div>
+                  {standingRow && standingRow.form.length > 0 && (
+                    <div className="flex items-center gap-1 font-mono text-[11px]">
+                      {standingRow.form.map((res, idx) => (
+                        <span
+                          key={idx}
+                          className={`w-5 h-5 rounded flex items-center justify-center font-bold ${
+                            res === 'W'
+                              ? 'bg-[#63E6A5]/20 text-[#63E6A5]'
+                              : res === 'D'
+                              ? 'bg-white/10 text-[#A5B2BD]'
+                              : 'bg-[#F87171]/20 text-[#F87171]'
+                          }`}
+                        >
+                          {res}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="mt-3 flex flex-col divide-y divide-[#34424E] text-xs tabular-nums">
-                  {panel.matches.map((m) => (
+                  {panel.matches.map((m) => {
+                    const isHomeInMatch = m.home_short === panel.teamObj.short_name || m.home_team_id === panel.teamObj.id;
+                    const gf = isHomeInMatch ? (m.home_goals ?? 0) : (m.away_goals ?? 0);
+                    const ga = isHomeInMatch ? (m.away_goals ?? 0) : (m.home_goals ?? 0);
+                    const outcome = gf > ga ? 'W' : gf < ga ? 'L' : 'D';
+                    return (
                     <div key={m.id} className="py-2 flex items-center justify-between gap-2">
-                      <span className="text-[#A5B2BD]">MW {m.matchweek}</span>
-                      <span className="text-[#F4F7F5] font-medium">
+                      <span className="flex items-center gap-2 text-[#A5B2BD]">
+                        <span
+                          className={`w-5 h-5 rounded inline-flex items-center justify-center font-mono text-[10px] font-bold ${
+                            outcome === 'W'
+                              ? 'bg-[#63E6A5]/20 text-[#63E6A5]'
+                              : outcome === 'D'
+                              ? 'bg-white/10 text-[#A5B2BD]'
+                              : 'bg-[#F87171]/20 text-[#F87171]'
+                          }`}
+                        >
+                          {outcome}
+                        </span>
+                        <span>MW {m.matchweek}</span>
+                      </span>
+                      <span className="text-[#F4F7F5] font-medium text-center">
                         {m.home_short} {m.home_goals}–{m.away_goals} {m.away_short}
                       </span>
                       <span className="font-mono text-[#A5B2BD] text-right">
@@ -409,10 +456,12 @@ export const MatchCenterPage: React.FC = () => {
                           : 'Goals only'}
                       </span>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Availability Notes */}

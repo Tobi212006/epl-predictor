@@ -1,6 +1,26 @@
 import React from 'react';
+import {
+  ALL_REGISTERED_CLUBS,
+  CLUB_CONFIG_MAP,
+  CORE_EPL_20_CLUBS,
+  getClubConfig,
+  getContrastTextColor,
+  getRelativeLuminance,
+  parseHexRgb,
+  type ClubConfig,
+  type KitPattern,
+} from '../../config/clubs';
 
-export type KitPattern = 'solid' | 'raglan' | 'stripes' | 'hoops' | 'sash' | 'pinstripe';
+export {
+  ALL_REGISTERED_CLUBS,
+  CLUB_CONFIG_MAP,
+  CORE_EPL_20_CLUBS,
+  getClubConfig,
+  getContrastTextColor,
+  getRelativeLuminance,
+  type ClubConfig,
+  type KitPattern,
+};
 
 export interface AuthenticKitSpec {
   primary: string;
@@ -12,188 +32,20 @@ export interface AuthenticKitSpec {
   awayPattern: KitPattern;
 }
 
-export const CLUB_KIT_SPECS: Record<string, AuthenticKitSpec> = {
-  arsenal: {
-    primary: '#EF0107',
-    secondary: '#FFFFFF',
-    trim: '#063672',
-    pattern: 'raglan',
-    awayPrimary: '#1A1C22',
-    awaySecondary: '#63E6A5',
-    awayPattern: 'pinstripe',
-  },
-  liverpool: {
-    primary: '#C8102E',
-    secondary: '#FFFFFF',
-    trim: '#F6EB61',
-    pattern: 'pinstripe',
-    awayPrimary: '#15221E',
-    awaySecondary: '#7DD3FC',
-    awayPattern: 'raglan',
-  },
-  'man-city': {
-    primary: '#6CABDD',
-    secondary: '#1C2C5B',
-    trim: '#FFFFFF',
-    pattern: 'solid',
-    awayPrimary: '#6C1D45',
-    awaySecondary: '#F6EB61',
-    awayPattern: 'sash',
-  },
-  chelsea: {
-    primary: '#034694',
-    secondary: '#FFFFFF',
-    trim: '#DBA111',
-    pattern: 'solid',
-    awayPrimary: '#F7E7D5',
-    awaySecondary: '#034694',
-    awayPattern: 'sash',
-  },
-  'aston-villa': {
-    primary: '#670E36',
-    secondary: '#95BFE5',
-    trim: '#FEE505',
-    pattern: 'raglan',
-    awayPrimary: '#F3F4F6',
-    awaySecondary: '#670E36',
-    awayPattern: 'raglan',
-  },
-  newcastle: {
-    primary: '#161618',
-    secondary: '#FFFFFF',
-    trim: '#41B6E6',
-    pattern: 'stripes',
-    awayPrimary: '#E2F1EA',
-    awaySecondary: '#165442',
-    awayPattern: 'hoops',
-  },
-  tottenham: {
-    primary: '#F8FAFC',
-    secondary: '#132257',
-    trim: '#132257',
-    pattern: 'raglan',
-    awayPrimary: '#132257',
-    awaySecondary: '#73C2FB',
-    awayPattern: 'pinstripe',
-  },
-  brighton: {
-    primary: '#0057B8',
-    secondary: '#FFFFFF',
-    trim: '#FFCD00',
-    pattern: 'stripes',
-    awayPrimary: '#F59E0B',
-    awaySecondary: '#111827',
-    awayPattern: 'hoops',
-  },
-  'nottm-forest': {
-    primary: '#DD0000',
-    secondary: '#FFFFFF',
-    trim: '#FFFFFF',
-    pattern: 'solid',
-    awayPrimary: '#0F172A',
-    awaySecondary: '#38BDF8',
-    awayPattern: 'sash',
-  },
-  bournemouth: {
-    primary: '#DA291C',
-    secondary: '#111111',
-    trim: '#E6C27A',
-    pattern: 'stripes',
-    awayPrimary: '#F8FAFC',
-    awaySecondary: '#DA291C',
-    awayPattern: 'sash',
-  },
-  fulham: {
-    primary: '#F8FAFC',
-    secondary: '#111111',
-    trim: '#CC0000',
-    pattern: 'sash',
-    awayPrimary: '#1B2732',
-    awaySecondary: '#F87171',
-    awayPattern: 'hoops',
-  },
-  brentford: {
-    primary: '#E30613',
-    secondary: '#FFFFFF',
-    trim: '#111111',
-    pattern: 'stripes',
-    awayPrimary: '#1E293B',
-    awaySecondary: '#FBBF24',
-    awayPattern: 'raglan',
-  },
-  'man-united': {
-    primary: '#DA291C',
-    secondary: '#FBE122',
-    trim: '#111111',
-    pattern: 'solid',
-    awayPrimary: '#1B2A4A',
-    awaySecondary: '#E2E8F0',
-    awayPattern: 'pinstripe',
-  },
-  'crystal-palace': {
-    primary: '#1B458F',
-    secondary: '#C4122E',
-    trim: '#FFFFFF',
-    pattern: 'stripes',
-    awayPrimary: '#F8FAFC',
-    awaySecondary: '#1B458F',
-    awayPattern: 'sash',
-  },
-  everton: {
-    primary: '#003399',
-    secondary: '#FFFFFF',
-    trim: '#FFFFFF',
-    pattern: 'solid',
-    awayPrimary: '#1F2937',
-    awaySecondary: '#FBBF24',
-    awayPattern: 'hoops',
-  },
-  leeds: {
-    primary: '#F8FAFC',
-    secondary: '#1D428A',
-    trim: '#FFCD00',
-    pattern: 'solid',
-    awayPrimary: '#1D428A',
-    awaySecondary: '#FFCD00',
-    awayPattern: 'sash',
-  },
-  sunderland: {
-    primary: '#EB172B',
-    secondary: '#FFFFFF',
-    trim: '#111111',
-    pattern: 'stripes',
-    awayPrimary: '#0F172A',
-    awaySecondary: '#38BDF8',
-    awayPattern: 'raglan',
-  },
-  'hull-city': {
-    primary: '#F59E0B',
-    secondary: '#111827',
-    trim: '#FFFFFF',
-    pattern: 'stripes',
-    awayPrimary: '#1E293B',
-    awaySecondary: '#F59E0B',
-    awayPattern: 'sash',
-  },
-  ipswich: {
-    primary: '#0044A9',
-    secondary: '#FFFFFF',
-    trim: '#DE2C37',
-    pattern: 'pinstripe',
-    awayPrimary: '#141E28',
-    awaySecondary: '#FFFFFF',
-    awayPattern: 'solid',
-  },
-  coventry: {
-    primary: '#59BBE8',
-    secondary: '#FFFFFF',
-    trim: '#0E2448',
-    pattern: 'stripes',
-    awayPrimary: '#111827',
-    awaySecondary: '#59BBE8',
-    awayPattern: 'sash',
-  },
-};
+export const CLUB_KIT_SPECS: Record<string, AuthenticKitSpec> = Object.fromEntries(
+  ALL_REGISTERED_CLUBS.map((c) => [
+    c.id,
+    {
+      primary: c.primaryColor,
+      secondary: c.secondaryColor,
+      trim: c.trimColor,
+      pattern: c.pattern,
+      awayPrimary: c.awayPrimary,
+      awaySecondary: c.awaySecondary,
+      awayPattern: c.awayPattern,
+    },
+  ]),
+);
 
 export interface ClubIdentityMeta {
   nickname: string;
@@ -202,55 +54,45 @@ export interface ClubIdentityMeta {
   city: string;
 }
 
-export const CLUB_IDENTITY_META: Record<string, ClubIdentityMeta> = {
-  arsenal: { nickname: 'The Gunners', stadium: 'Emirates Stadium', capacity: 60704, city: 'London' },
-  'aston-villa': { nickname: 'The Villans', stadium: 'Villa Park', capacity: 42657, city: 'Birmingham' },
-  bournemouth: { nickname: 'The Cherries', stadium: 'Vitality Stadium', capacity: 11307, city: 'Bournemouth' },
-  brentford: { nickname: 'The Bees', stadium: 'Gtech Community Stadium', capacity: 17250, city: 'London' },
-  brighton: { nickname: 'The Seagulls', stadium: 'Amex Stadium', capacity: 31800, city: 'Brighton' },
-  chelsea: { nickname: 'The Blues', stadium: 'Stamford Bridge', capacity: 40341, city: 'London' },
-  coventry: { nickname: 'The Sky Blues', stadium: 'Coventry Building Society Arena', capacity: 32609, city: 'Coventry' },
-  'crystal-palace': { nickname: 'The Eagles', stadium: 'Selhurst Park', capacity: 25486, city: 'London' },
-  everton: { nickname: 'The Toffees', stadium: 'Hill Dickinson Stadium', capacity: 52769, city: 'Liverpool' },
-  fulham: { nickname: 'The Cottagers', stadium: 'Craven Cottage', capacity: 24500, city: 'London' },
-  'hull-city': { nickname: 'The Tigers', stadium: 'MKM Stadium', capacity: 25400, city: 'Hull' },
-  ipswich: { nickname: 'Tractor Boys', stadium: 'Portman Road', capacity: 29673, city: 'Ipswich' },
-  leeds: { nickname: 'The Whites', stadium: 'Elland Road', capacity: 37642, city: 'Leeds' },
-  liverpool: { nickname: 'The Reds', stadium: 'Anfield', capacity: 61276, city: 'Liverpool' },
-  'man-city': { nickname: 'The Citizens', stadium: 'Etihad Stadium', capacity: 53400, city: 'Manchester' },
-  'man-united': { nickname: 'The Red Devils', stadium: 'Old Trafford', capacity: 74310, city: 'Manchester' },
-  newcastle: { nickname: 'The Magpies', stadium: "St. James' Park", capacity: 52305, city: 'Newcastle' },
-  'nottm-forest': { nickname: 'Tricky Trees', stadium: 'City Ground', capacity: 30404, city: 'Nottingham' },
-  sunderland: { nickname: 'The Black Cats', stadium: 'Stadium of Light', capacity: 49000, city: 'Sunderland' },
-  tottenham: { nickname: 'Spurs', stadium: 'Tottenham Hotspur Stadium', capacity: 62850, city: 'London' },
-};
+export const CLUB_IDENTITY_META: Record<string, ClubIdentityMeta> = Object.fromEntries(
+  ALL_REGISTERED_CLUBS.map((c) => [
+    c.id,
+    {
+      nickname: c.nickname,
+      stadium: c.stadium,
+      capacity: c.capacity,
+      city: c.city,
+    },
+  ]),
+);
 
-function parseHexRgb(hex: string): [number, number, number] {
-  const clean = hex.replace('#', '');
-  if (clean.length !== 6) return [30, 41, 59];
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return [30, 41, 59];
-  return [r, g, b];
-}
-
-export function getRelativeLuminance(hex: string): number {
-  const [r, g, b] = parseHexRgb(hex).map((v) => {
-    const s = v / 255;
-    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-export function liftHexLuminance(hex: string, minLuminance = 0.28): string {
+export function liftHexLuminance(hex: string, minLuminance = 0.24): string {
   if (getRelativeLuminance(hex) >= minLuminance) return hex;
   const [r, g, b] = parseHexRgb(hex);
-  for (let step = 1; step <= 16; step += 1) {
-    const t = step / 16;
-    const nr = Math.round(r + (244 - r) * t);
-    const ng = Math.round(g + (247 - g) * t);
-    const nb = Math.round(b + (245 - b) * t);
+  const maxC = Math.max(r, g, b);
+  const minC = Math.min(r, g, b);
+
+  // Scale chromatic colors toward peak channel saturation first so hue stays true
+  // (e.g., Chelsea royal blue stays blue, Liverpool red stays red).
+  let sr = r;
+  let sg = g;
+  let sb = b;
+  if (maxC - minC >= 20 && maxC > 0 && maxC < 255) {
+    const scale = 255 / maxC;
+    sr = Math.min(255, Math.round(r * scale));
+    sg = Math.min(255, Math.round(g * scale));
+    sb = Math.min(255, Math.round(b * scale));
+    const scaledHex = `#${sr.toString(16).padStart(2, '0')}${sg.toString(16).padStart(2, '0')}${sb.toString(16).padStart(2, '0')}`.toUpperCase();
+    if (getRelativeLuminance(scaledHex) >= minLuminance) {
+      return scaledHex;
+    }
+  }
+
+  for (let step = 1; step <= 24; step += 1) {
+    const t = step / 24;
+    const nr = Math.round(sr + (255 - sr) * t);
+    const ng = Math.round(sg + (255 - sg) * t);
+    const nb = Math.round(sb + (255 - sb) * t);
     const cand = `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`.toUpperCase();
     if (getRelativeLuminance(cand) >= minLuminance) {
       return cand;
@@ -266,20 +108,14 @@ export function areKitColorsClose(hexA: string, hexB: string): boolean {
   return dist < 95;
 }
 
-function getContrastText(hex: string): string {
-  const [r, g, b] = parseHexRgb(hex);
-  const luma = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luma > 0.64 ? '#0D131A' : '#FFFFFF';
-}
-
 export function resolveClubKitColors(
   teamId: string | undefined,
   fallbackPrimary: string,
   fallbackSecondary = '#FFFFFF',
   isAway = false,
 ): { primary: string; secondary: string; trim: string; pattern: KitPattern } {
-  const spec = teamId ? CLUB_KIT_SPECS[teamId] : undefined;
-  if (!spec) {
+  const config = getClubConfig(teamId);
+  if (!config) {
     return {
       primary: fallbackPrimary,
       secondary: fallbackSecondary,
@@ -289,23 +125,24 @@ export function resolveClubKitColors(
   }
   if (isAway) {
     return {
-      primary: spec.awayPrimary,
-      secondary: spec.awaySecondary,
-      trim: spec.primary,
-      pattern: spec.awayPattern,
+      primary: config.awayPrimary,
+      secondary: config.awaySecondary,
+      trim: config.primaryColor,
+      pattern: config.awayPattern,
     };
   }
   return {
-    primary: spec.primary,
-    secondary: spec.secondary,
-    trim: spec.trim,
-    pattern: spec.pattern,
+    primary: config.primaryColor,
+    secondary: config.secondaryColor,
+    trim: config.trimColor,
+    pattern: config.pattern,
   };
 }
 
 /**
  * Resolves a high-contrast club accent hex safe for dark Charcoal/Slate UI
- * bars, pitch node strokes, and SVG/Recharts overlays (never invisible on #0D131A).
+ * bars, pitch node strokes, and SVG/Recharts overlays (never invisible on #0D131A),
+ * preserving the club's authentic primary hue instead of jumping to yellow/white trim.
  */
 export function resolveVisibleUiAccent(
   teamId: string | undefined,
@@ -315,25 +152,37 @@ export function resolveVisibleUiAccent(
   minLuminance = 0.24,
 ): string {
   const kit = resolveClubKitColors(teamId, fallbackPrimary, fallbackSecondary, isAway);
-  const candidates = [kit.primary, kit.trim, kit.secondary];
-  for (const cand of candidates) {
-    if (getRelativeLuminance(cand) >= minLuminance) {
-      return cand;
-    }
+  if (getRelativeLuminance(kit.primary) >= minLuminance) {
+    return kit.primary;
+  }
+  const [r, g, b] = parseHexRgb(kit.primary);
+  const isAchromatic = Math.max(r, g, b) - Math.min(r, g, b) < 22;
+  if (isAchromatic) {
+    if (getRelativeLuminance(kit.secondary) >= minLuminance) return kit.secondary;
+    if (getRelativeLuminance(kit.trim) >= minLuminance) return kit.trim;
   }
   return liftHexLuminance(kit.primary, minLuminance);
 }
 
 /**
- * Resolves contrasting Home & Away UI accents for shared charts, dual pitches,
- * and comparison bars so both clubs are bright on dark surfaces and clearly distinct.
+ * Resolves authentic Home & Away kit surfaces plus readable accents for match cards and 3D book covers.
+ * Uses Away's Home kit unless its primary clashes with Home's primary, in which case Away switches to its Away kit.
  */
-export function resolveMatchupUiAccents(
+export function resolveMatchupKitPair(
   home: { teamId?: string; primaryColor: string; secondaryColor?: string },
   away: { teamId?: string; primaryColor: string; secondaryColor?: string },
-): { homeAccent: string; awayAccent: string; isAwayKit: boolean } {
-  const isAwayKit = areKitColorsClose(home.primaryColor, away.primaryColor);
-  const awayKit = resolveClubKitColors(
+): {
+  homeKit: { primary: string; secondary: string; trim: string; pattern: KitPattern; textColor: '#0D131A' | '#FFFFFF' };
+  awayKit: { primary: string; secondary: string; trim: string; pattern: KitPattern; textColor: '#0D131A' | '#FFFFFF' };
+  homeAccent: string;
+  awayAccent: string;
+  isAwayKit: boolean;
+} {
+  const homeKitRaw = resolveClubKitColors(home.teamId, home.primaryColor, home.secondaryColor || '#FFFFFF', false);
+  const awayHomeRaw = resolveClubKitColors(away.teamId, away.primaryColor, away.secondaryColor || '#FFFFFF', false);
+  const isAwayKit = areKitColorsClose(homeKitRaw.primary, awayHomeRaw.primary);
+
+  const awayKitRaw = resolveClubKitColors(
     away.teamId,
     away.primaryColor,
     away.secondaryColor || '#FFFFFF',
@@ -347,29 +196,51 @@ export function resolveMatchupUiAccents(
     false,
   );
 
-  const awayCandidates = [
-    awayKit.primary,
-    awayKit.secondary,
-    awayKit.trim,
-    '#F87171',
-    '#7DD3FC',
-  ];
-  let awayAccent = '';
-  for (const cand of awayCandidates) {
-    if (getRelativeLuminance(cand) >= 0.24 && !areKitColorsClose(homeAccent, cand)) {
-      awayAccent = cand;
-      break;
+  let awayAccent = resolveVisibleUiAccent(
+    away.teamId,
+    away.primaryColor,
+    away.secondaryColor || '#FFFFFF',
+    isAwayKit,
+  );
+
+  if (areKitColorsClose(homeAccent, awayAccent)) {
+    const candidates = [
+      liftHexLuminance(awayKitRaw.secondary, 0.24),
+      liftHexLuminance(awayKitRaw.trim, 0.24),
+      areKitColorsClose(homeAccent, '#7DD3FC') ? '#FBBF24' : '#7DD3FC',
+    ];
+    for (const cand of candidates) {
+      if (getRelativeLuminance(cand) >= 0.24 && !areKitColorsClose(homeAccent, cand)) {
+        awayAccent = cand;
+        break;
+      }
     }
   }
-  if (!awayAccent) {
-    const lifted = liftHexLuminance(awayKit.primary, 0.26);
-    awayAccent = areKitColorsClose(homeAccent, lifted)
-      ? areKitColorsClose(homeAccent, '#F87171')
-        ? '#7DD3FC'
-        : '#F87171'
-      : lifted;
-  }
 
+  return {
+    homeKit: {
+      ...homeKitRaw,
+      textColor: getContrastTextColor(homeKitRaw.primary),
+    },
+    awayKit: {
+      ...awayKitRaw,
+      textColor: getContrastTextColor(awayKitRaw.primary),
+    },
+    homeAccent,
+    awayAccent,
+    isAwayKit,
+  };
+}
+
+/**
+ * Resolves contrasting Home & Away UI accents for shared charts, dual pitches,
+ * and comparison bars so both clubs are bright on dark surfaces and clearly distinct.
+ */
+export function resolveMatchupUiAccents(
+  home: { teamId?: string; primaryColor: string; secondaryColor?: string },
+  away: { teamId?: string; primaryColor: string; secondaryColor?: string },
+): { homeAccent: string; awayAccent: string; isAwayKit: boolean } {
+  const { homeAccent, awayAccent, isAwayKit } = resolveMatchupKitPair(home, away);
   return { homeAccent, awayAccent, isAwayKit };
 }
 
@@ -386,16 +257,51 @@ export function getClubUiTheme(
   accent: string;
   glowSoft: string;
   glowMedium: string;
+  textOnPrimary: '#0D131A' | '#FFFFFF';
   meta: ClubIdentityMeta | null;
+  config: ClubConfig | null;
 } {
+  const config = getClubConfig(teamId);
   const accent = resolveVisibleUiAccent(teamId, fallbackPrimary, fallbackSecondary, false, 0.24);
   return {
     accent,
     glowSoft: hexToRgba(accent, 0.14),
     glowMedium: hexToRgba(accent, 0.28),
-    meta: teamId ? CLUB_IDENTITY_META[teamId] || null : null,
+    textOnPrimary: config?.textColor || getContrastTextColor(fallbackPrimary),
+    meta: config ? { nickname: config.nickname, stadium: config.stadium, capacity: config.capacity, city: config.city } : null,
+    config,
   };
 }
+
+export const ClubTlaBadge: React.FC<{
+  teamId?: string;
+  tla?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  size?: 'sm' | 'md';
+  className?: string;
+}> = ({ teamId, tla, primaryColor = '#34424E', secondaryColor = '#F4F7F5', size = 'sm', className = '' }) => {
+  const cfg = getClubConfig(teamId);
+  const bg = cfg?.primaryColor || primaryColor;
+  const trim = cfg?.secondaryColor || secondaryColor;
+  const fg = cfg?.textColor || getContrastTextColor(bg);
+  const label = tla || cfg?.tla || 'EPL';
+  const dim = size === 'md' ? 'w-9 h-9 text-xs' : 'w-7 h-7 text-[10px]';
+
+  return (
+    <span
+      className={`inline-flex items-center justify-center rounded-md font-mono font-extrabold tracking-wider shrink-0 border shadow-sm ${dim} ${className}`}
+      style={{
+        backgroundColor: bg,
+        color: fg,
+        borderColor: trim,
+      }}
+      aria-hidden="true"
+    >
+      {label}
+    </span>
+  );
+};
 
 interface ClubKitBadgeProps {
   teamId?: string;
@@ -435,7 +341,7 @@ export const ClubKitBadge: React.FC<ClubKitBadgeProps> = ({
   const kitSecondary = resolved.secondary;
   const kitTrim = resolved.trim;
   const kitPattern = variant || resolved.pattern;
-  const textCol = getContrastText(kitPrimary);
+  const textCol = getContrastTextColor(kitPrimary);
 
   return (
     <svg
